@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SEMS · Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/js/app.js"></script>
+<script>
+if (!requireAuth()) {} else {
+  document.getElementById('root').innerHTML = renderShell('dashboard');
+  document.getElementById('main').innerHTML = topbar('Dashboard') + `
+    <div class="stat-grid" id="stats"></div>
+    <div class="row g-3">
+      <div class="col-lg-7"><div class="card"><h3>Employees by Department</h3><canvas id="deptChart" height="120"></canvas></div></div>
+      <div class="col-lg-5"><div class="card"><h3>Active vs Inactive</h3><canvas id="statusChart" height="120"></canvas></div></div>
+    </div>`;
+  (async () => {
+    const s = await API.get('/api/dashboard/stats');
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="label">Total Employees</div><div class="value">${s.totalEmployees}</div></div>
+      <div class="stat"><div class="label">Active</div><div class="value">${s.activeEmployees}</div></div>
+      <div class="stat"><div class="label">Inactive</div><div class="value">${s.inactiveEmployees}</div></div>
+      <div class="stat"><div class="label">Departments</div><div class="value">${s.byDepartment.length}</div></div>`;
+    new Chart(document.getElementById('deptChart'), {
+      type:'bar',
+      data:{ labels:s.byDepartment.map(d=>d.department), datasets:[{ label:'Employees', data:s.byDepartment.map(d=>d.count), backgroundColor:'#5c7cfa', borderRadius:8 }]},
+      options:{plugins:{legend:{display:false}}}
+    });
+    new Chart(document.getElementById('statusChart'), {
+      type:'doughnut',
+      data:{ labels:['Active','Inactive'], datasets:[{ data:[s.activeEmployees,s.inactiveEmployees], backgroundColor:['#2f9e44','#e03131'] }]}
+    });
+  })();
+}
+</script>
+</body></html>

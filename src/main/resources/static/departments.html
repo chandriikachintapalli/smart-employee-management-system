@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SEMS · Departments</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+</head><body>
+<div id="root"></div>
+<script src="/js/app.js"></script>
+<script>
+if (!requireAuth()){} else {
+  const isAdmin = API.user().role==='ADMIN';
+  document.getElementById('root').innerHTML = renderShell('departments');
+  document.getElementById('main').innerHTML = topbar('Departments') + `
+    <div class="card">
+      ${isAdmin?`<form id="f" class="row g-2 mb-3">
+        <input type="hidden" id="did">
+        <div class="col-md-4"><input class="form-control" id="name" placeholder="Department name" required></div>
+        <div class="col-md-6"><input class="form-control" id="description" placeholder="Description"></div>
+        <div class="col-md-2 d-grid"><button class="btn btn-primary">Save</button></div>
+      </form>`:''}
+      <table class="table"><thead><tr><th>ID</th><th>Name</th><th>Description</th>${isAdmin?'<th></th>':''}</tr></thead>
+      <tbody id="rows"></tbody></table>
+    </div>`;
+  async function load(){
+    const list = await API.get('/api/departments');
+    document.getElementById('rows').innerHTML = list.map(d=>`
+      <tr><td>${d.id}</td><td>${d.name}</td><td>${d.description||''}</td>
+      ${isAdmin?`<td class="text-end">
+        <button class="btn btn-sm btn-outline-primary" onclick='edit(${JSON.stringify(d)})'>Edit</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="del(${d.id})">Del</button></td>`:''}
+      </tr>`).join('') || `<tr><td colspan="4" class="text-center text-muted">No departments</td></tr>`;
+  }
+  if (isAdmin){
+    document.getElementById('f').addEventListener('submit', async e=>{
+      e.preventDefault();
+      const id = document.getElementById('did').value;
+      const body={ name:document.getElementById('name').value, description:document.getElementById('description').value };
+      try{
+        if (id) await API.put('/api/departments/'+id, body); else await API.post('/api/departments', body);
+        document.getElementById('f').reset(); document.getElementById('did').value=''; load();
+      }catch(err){ alert(err.message); }
+    });
+    window.edit=(d)=>{ document.getElementById('did').value=d.id; document.getElementById('name').value=d.name; document.getElementById('description').value=d.description||''; };
+    window.del=async(id)=>{ if(confirm('Delete?')){ await API.del('/api/departments/'+id); load(); } };
+  }
+  load();
+}
+</script></body></html>

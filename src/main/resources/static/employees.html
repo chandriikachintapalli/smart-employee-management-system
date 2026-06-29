@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SEMS · Employees</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+</head><body>
+<div id="root"></div>
+<script src="/js/app.js"></script>
+<script>
+if (!requireAuth()){} else {
+  const isAdmin = API.user().role==='ADMIN';
+  document.getElementById('root').innerHTML = renderShell('employees');
+  document.getElementById('main').innerHTML = topbar('Employees') + `
+    <div class="card">
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <input id="q" class="form-control" style="max-width:280px" placeholder="Search name, email, title...">
+        <select id="sortBy" class="form-select" style="max-width:160px">
+          <option value="id">Sort: ID</option>
+          <option value="firstName">First Name</option>
+          <option value="lastName">Last Name</option>
+          <option value="email">Email</option>
+        </select>
+        <select id="dir" class="form-select" style="max-width:130px">
+          <option value="asc">Asc</option><option value="desc">Desc</option>
+        </select>
+        <button class="btn btn-outline-primary" onclick="load()">Search</button>
+        <div class="ms-auto">
+          ${isAdmin?`<button class="btn btn-primary" onclick="openForm()">+ Add Employee</button>`:''}
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle"><thead><tr>
+          <th>ID</th><th>Name</th><th>Email</th><th>Job Title</th><th>Department</th><th>Status</th>${isAdmin?'<th></th>':''}
+        </tr></thead><tbody id="rows"></tbody></table>
+      </div>
+      <nav><ul class="pagination" id="pager"></ul></nav>
+    </div>
+
+    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="mTitle">Add Employee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form id="empForm" class="row g-3">
+          <input type="hidden" id="eid">
+          <div class="col-md-6"><label class="form-label">First Name</label><input class="form-control" id="firstName" required></div>
+          <div class="col-md-6"><label class="form-label">Last Name</label><input class="form-control" id="lastName" required></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="email" required></div>
+          <div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" id="phone"></div>
+          <div class="col-md-6"><label class="form-label">Job Title</label><input class="form-control" id="jobTitle"></div>
+          <div class="col-md-6"><label class="form-label">Salary</label><input type="number" step="0.01" class="form-control" id="salary"></div>
+          <div class="col-md-6"><label class="form-label">Hire Date</label><input type="date" class="form-control" id="hireDate"></div>
+          <div class="col-md-6"><label class="form-label">Status</label>
+            <select class="form-select" id="status"><option>ACTIVE</option><option>INACTIVE</option></select></div>
+          <div class="col-md-12"><label class="form-label">Department</label>
+            <select class="form-select" id="departmentId"><option value="">-- none --</option></select></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" onclick="save()">Save</button>
+      </div>
+    </div></div></div>`;
+  let page=0;
+  async function loadDepts(){
+    const ds = await API.get('/api/departments');
+    document.getElementById('departmentId').innerHTML = '<option value="">-- none --</option>' +
+      ds.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  }
+  window.load = async function(){
+    const q = document.getElementById('q').value;
+    const sortBy = document.getElementById('sortBy').value;
+    const dir = document.getElementById('dir').value;
+    const r = await API.get(`/api/employees?q=${encodeURIComponent(q)}&page=${page}&size=10&sortBy=${sortBy}&dir=${dir}`);
+    document.getElementById('rows').innerHTML = r.content.map(e=>`
+      <tr>
+        <td>${e.id}</td>
+        <td>${e.firstName} ${e.lastName}</td>
+        <td>${e.email}</td>
+        <td>${e.jobTitle||'-'}</td>
+        <td>${e.departmentName||'-'}</td>
+        <td>${badgeStatus(e.status)}</td>
+        ${isAdmin?`<td class="text-end">
+          <button class="btn btn-sm btn-outline-primary" onclick='openForm(${JSON.stringify(e)})'>Edit</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="del(${e.id})">Del</button>
+        </td>`:''}
+      </tr>`).join('') || `<tr><td colspan="7" class="text-center text-muted">No employees</td></tr>`;
+    const total = r.totalPages;
+    let html='';
+    for (let i=0;i<total;i++) html += `<li class="page-item ${i===page?'active':''}"><a class="page-link" href="#" onclick="goto(${i})">${i+1}</a></li>`;
+    document.getElementById('pager').innerHTML = html;
+  };
+  window.goto = (i)=>{ page=i; load(); };
+  window.openForm = (e)=>{
+    document.getElementById('mTitle').textContent = e?'Edit Employee':'Add Employee';
+    ['eid','firstName','lastName','email','phone','jobTitle','salary','hireDate'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('status').value='ACTIVE';
+    document.getElementById('departmentId').value='';
+    if (e){
+      document.getElementById('eid').value=e.id;
+      document.getElementById('firstName').value=e.firstName||'';
+      document.getElementById('lastName').value=e.lastName||'';
+      document.getElementById('email').value=e.email||'';
+      document.getElementById('phone').value=e.phone||'';
+      document.getElementById('jobTitle').value=e.jobTitle||'';
+      document.getElementById('salary').value=e.salary||'';
+      document.getElementById('hireDate').value=e.hireDate||'';
+      document.getElementById('status').value=e.status||'ACTIVE';
+      document.getElementById('departmentId').value=e.departmentId||'';
+    }
+    new bootstrap.Modal('#empModal').show();
+  };
+  window.save = async ()=>{
+    const id = document.getElementById('eid').value;
+    const body = {
+      firstName: document.getElementById('firstName').value,
+      lastName:  document.getElementById('lastName').value,
+      email:     document.getElementById('email').value,
+      phone:     document.getElementById('phone').value,
+      jobTitle:  document.getElementById('jobTitle').value,
+      salary:    document.getElementById('salary').value||null,
+      hireDate:  document.getElementById('hireDate').value||null,
+      status:    document.getElementById('status').value,
+      departmentId: document.getElementById('departmentId').value || null,
+    };
+    try{
+      if (id) await API.put('/api/employees/'+id, body);
+      else    await API.post('/api/employees', body);
+      bootstrap.Modal.getInstance(document.getElementById('empModal')).hide();
+      load();
+    }catch(err){ alert(err.message); }
+  };
+  window.del = async (id)=>{ if(confirm('Delete this employee?')){ await API.del('/api/employees/'+id); load(); } };
+  loadDepts(); load();
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>

@@ -1,0 +1,64 @@
+:root{
+  --bg:#f4f6fb; --surface:#ffffff; --ink:#16223a; --muted:#6b7a99;
+  --primary:#3b5bdb; --primary-2:#5c7cfa; --accent:#7048e8;
+  --success:#2f9e44; --danger:#e03131; --warning:#f08c00;
+  --border:#e7ebf3; --shadow:0 10px 30px rgba(20,40,90,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--primary);text-decoration:none}
+.brand{font-weight:800;letter-spacing:.3px;background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* AUTH */
+.auth-wrap{min-height:100vh;display:grid;place-items:center;background:radial-gradient(1200px 600px at 10% 0%,#dde6ff 0,transparent 60%),radial-gradient(800px 600px at 100% 100%,#efe2ff 0,transparent 60%),var(--bg)}
+.auth-card{width:100%;max-width:420px;background:var(--surface);border-radius:18px;padding:36px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.auth-card h1{margin:0 0 6px;font-size:26px}
+.auth-card .sub{color:var(--muted);margin-bottom:22px}
+
+/* SHELL */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:#0f1a36;color:#cdd6f4;padding:22px 16px;position:sticky;top:0;height:100vh}
+.sidebar .logo{font-size:18px;font-weight:800;color:#fff;margin-bottom:24px;display:flex;gap:8px;align-items:center}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#cdd6f4;border-radius:10px;margin-bottom:4px;font-weight:500}
+.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .footer{position:absolute;bottom:18px;left:16px;right:16px;font-size:12px;color:#7888b5}
+
+.main{padding:24px 28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.topbar h2{margin:0;font-size:22px}
+.user-chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);padding:6px 12px;border-radius:999px;box-shadow:var(--shadow)}
+
+/* CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:22px}
+.stat{background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat .label{color:var(--muted);font-size:13px}
+.stat .value{font-size:28px;font-weight:800;margin-top:4px}
+.stat::before{content:"";position:absolute;inset:auto -30px -40px auto;width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));opacity:.08}
+
+.card{background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:18px}
+.card h3{margin:0 0 12px;font-size:16px}
+
+/* FORM + BUTTON */
+.form-control,.form-select{border-radius:10px!important;border:1px solid var(--border)!important;padding:10px 12px!important}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent))!important;border:none!important;border-radius:10px!important;padding:10px 16px!important;font-weight:600}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-outline-primary{border-radius:10px!important}
+
+/* TABLE */
+.table thead th{background:#f5f7fc;color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:.6px;border:none}
+.table td,.table th{vertical-align:middle}
+.badge-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.b-active{background:#e6f8ee;color:var(--success)}
+.b-inactive{background:#fdecec;color:var(--danger)}
+.b-pending{background:#fff4e0;color:var(--warning)}
+.b-approved{background:#e6f8ee;color:var(--success)}
+.b-rejected{background:#fdecec;color:var(--danger)}
+
+/* PROFILE */
+.avatar{width:96px;height:96px;border-radius:50%;background:#dde6ff;display:grid;place-items:center;color:var(--primary);font-weight:800;font-size:32px;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+
+@media (max-width: 900px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto}
+}
