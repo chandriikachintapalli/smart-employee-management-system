@@ -1,147 +1,127 @@
-# Smart Employee Management System (SEMS)
+# Smart Employee Management System
 
-A Full Stack Employee Management System built using **Java Spring Boot**, **Spring Security (JWT Authentication)**, **MySQL**, **HTML**, **CSS**, **JavaScript**, and **Bootstrap**.
+## Overview
 
-The application helps organizations efficiently manage employees, departments, leave requests, user profiles, reports, and administrative tasks through a secure and responsive web interface.
+Smart Employee Management System is a full-stack web application developed using Java Spring Boot, Spring Security, JWT Authentication, MySQL, HTML, CSS, JavaScript, and Bootstrap. It provides a secure platform for managing employees, departments, leave requests, user profiles, and administrative operations through a responsive web interface.
 
 ---
 
 ## Features
 
-* JWT Authentication & Secure Login
-* Role-Based Access Control
-* Employee Management (CRUD)
-* Department Management (CRUD)
-* Leave Management
-* User Profile Management
-* Interactive Dashboard with Charts
-* Reports Module
-* Responsive UI
-* REST APIs using Spring Boot
+- Secure JWT-based Authentication and Authorization
+- Role-Based Access Control
+- Employee Management (Create, Read, Update, Delete)
+- Department Management
+- Leave Management
+- User Profile Management
+- Dashboard with Charts and Statistics
+- Reports Module
+- RESTful APIs
+- Responsive User Interface
 
 ---
 
-## Tech Stack
+## Technology Stack
 
 ### Backend
 
-* Java
-* Spring Boot
-* Spring Security
-* JWT Authentication
-* Spring Data JPA
-* Maven
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- JWT Authentication
+- Maven
 
 ### Frontend
 
-* HTML5
-* CSS3
-* JavaScript
-* Bootstrap
+- HTML
+- CSS
+- JavaScript
+- Bootstrap
 
 ### Database
 
-* MySQL
+- MySQL
 
-### Tools
+### Development Tools
 
-* IntelliJ IDEA
-* MySQL Workbench
-* Git
-* GitHub
+- IntelliJ IDEA
+- MySQL Workbench
+- Git
+- GitHub
 
 ---
 
 ## Project Structure
 
+```text
+smart-employee-management-system
+│
+├── sql/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   ├── resources/
+│   │   └── static/
+│
+├── uploads/
+├── pom.xml
+├── README.md
+└── .gitignore
 ```
-src/
- ├── main/
- │   ├── java/
- │   ├── resources/
- │   └── static/
- ├── uploads/
- ├── sql/
- ├── pom.xml
- └── README.md
-```
-
----
-
-## Screenshots
-
-### Login Page
-
-![Login](screenshots/login.png)
-
----
-
-### Dashboard
-
-![Dashboard](screenshots/dashboard.png)
-
----
-
-### Employee Management
-
-![Employees](screenshots/employees.png)
-
----
-
-### Department Management
-
-![Departments](screenshots/departments.png)
-
----
-
-### Leave Management
-
-![Leaves](screenshots/leaves.png)
-
----
-
-### User Profile
-
-![Profile](screenshots/profile.png)
 
 ---
 
 ## Installation
 
-1. Clone the repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/chandriikachintapalli/smart-employee-management-system.git
 ```
 
-2. Open the project in IntelliJ IDEA.
+### Open the Project
 
-3. Configure MySQL.
+Import the project into IntelliJ IDEA as a Maven project.
 
-4. Update the database credentials inside:
+### Configure the Database
 
-```
+Create a MySQL database and import the SQL script available in the `sql` folder.
+
+Update the database credentials in:
+
+```text
 src/main/resources/application.properties
 ```
 
-5. Run the application.
+Example:
 
-6. Open:
-
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/employee_management
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
 ```
+
+### Run the Application
+
+Start the Spring Boot application.
+
+Open:
+
+```text
 http://localhost:8080/login.html
 ```
 
 ---
 
-## Future Enhancements
+## Future Improvements
 
-* Attendance Management
-* Payroll Module
-* Email Notifications
-* Employee Photo Management
-* Advanced Reports
-* Dashboard Analytics
+- Attendance Management
+- Payroll Management
+- Email Notifications
+- Employee Photo Upload
+- Advanced Dashboard Analytics
+- PDF and Excel Report Generation
 
 ---
 
@@ -149,5 +129,6 @@ http://localhost:8080/login.html
 
 **Jyothi Chandrika Chintapalli**
 
-GitHub:
-https://github.com/chandriikachintapalli
+Email: chandrikachintapalli5@gmail.com
+
+GitHub: https://github.com/chandriikachintapalli
